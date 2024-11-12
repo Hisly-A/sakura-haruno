@@ -10,9 +10,9 @@ Muito se tem falado de containers e consequentemente do Docker no ambiente de de
 Sakura Haruno deseja mover os dados de seus pacientes e agendas de consultas do Datacenter local para a Nuvem, e além disso deseja mudar a estrutura do software utizado atualmente de monolítico para microsserviços.
 
 
-## Como resolver
+## Criação do container MySQL
 
-Será criado um Docker Swarm. Para isso crie no ambiente de nuvem escolhido 3 máquinas virtuais (podem ser máquinas básicas de 1 GB de RAM e 1 core de processamento apenas).
+Crie no ambiente de nuvem escolhido 3 máquinas virtuais (podem ser máquinas básicas de 1 GB de RAM e 1 core de processamento apenas).
 
 Em uma das VMs crie um container do Docker com o microsserviço desejado, nesse caso um banco de dados.
 
@@ -46,6 +46,120 @@ Crie um container Docker para armazenar o arquivo index.php, com o servidor web 
 Após isso, execute o comando abaixo para verificar os containers rodando:
 'docker ps'
 
+
 ### Estressando o container
 
+Acesse o site https://loader.io/, crie uma conta, crie um Target Host informando o domínio IP, por exemplo http//:34.201.104.100
+
+No container crie um arquivo com o nome gerado:
+
+![D1 03](https://github.com/user-attachments/assets/9f281ea1-ce58-471a-beb7-a2e10a07235f)
+
+![D1 04](https://github.com/user-attachments/assets/d29a9ad0-3eec-45ac-8fc1-c20c818ea36f)
+
+E no conteúdo do arquivo informe o mesmo nome.
+
+Lembre-se de criar o arquivo no diretório /var/lib/docker/volumes/app/_data.
+
+Retornando ao site https://loader.io/ clique em Verify e deverá aparecer uma mensagem informando que a verificação passou.
+
+Na aba Tests crie um novo teste informando:
+- Nome
+- Quantidade de clientes: 250
+- Duração: 1 minuto
+- Método: GET
+- Protocolo: HTTP
+- Host: 34.201.104.100
+- Path: index.php
+
+Após clique em *Run test* e analise as informações do teste:
+
+![D1 05](https://github.com/user-attachments/assets/02139851-806d-4331-a4f7-0547d8a6dda0)
+
+
+### Iniciando um Cluster Swarm
+
+Em /var/lib/docker/volumes/app/_data xecute o comando docker ps para verificar os containers ativos.
+
+Execute o comando abaixo para excluir o container da aplicação web-server:
+'docker rm --force web-server'
+
+Execute o comando abaixo para iniciar um Docker Swarm:
+'docker swarm init'
+
+Agora será necessário adicionar os demais servidores ou VMs ao Swarm, para isso acesse a VM desejada remotamente, entre como usuário root, e execute o comando abaixo:
+
+![D1 06](https://github.com/user-attachments/assets/0e84b8bf-7d5e-45f0-b4f1-31fd4dbcdaa9)
+
+Nesse caso o IP 172.31.0 127 é o IP de acesso local entre as máquinas virtuais onde o Docker Swarm foi criado, e a porta 2377 é a porta específica utilizada pelo Docker Swarm e esta deve ser liberada no firewall para que ele funcione.
+
+Execute o mesmo comando acima na terceira máquina virtual.
+
+Após execute o comando abaixo para verificar os nós pertencentes ao cluster:
+'docker node ls'
+
+Deverá retornar a seguinte tela:
+
+![D1 07](https://github.com/user-attachments/assets/0efa3cfd-603f-435c-a373-9fcbfeb5c65c)
+
+
+### Criando um serviço no Cluster Swarm
+
+Execute o comando abaixo na VM ou servidor principal:
+
+![D1 08](https://github.com/user-attachments/assets/8e6c4c0e-5b5a-43d6-976a-8d0dafc1ff6e)
+
+Onde:
+- docker service create: é o comando para criar um serviço de containers
+- --name web-server: é o nome do serviço
+- --replicas 10: quantidade de réplicas para o container desejado, no caso o container php
+- -dt: executar em segundo plano
+- -p 80:80: liberar o container na porta 80
+- --mount type=volume: montar o volume
+- src=app: onde está a aplicação
+- dst=/app/: para onde vai o container criado
+- webdevops/php-apache:alpine-php7: é a imagem
+
+Execute o comando abaixo para saber onde foram replicados os containers:
+'docker service ps web-server'
+
+
+### Replicando um volume dentro do Cluster
+
+Da forma como o cluster foi configurado ele ainda não está replicando os volumes para as demais VMs.
+
+Para isso será necessário replicar a pasta /var/lib/docker/volumes/app/_data para as VMs 2 e 3.
+
+Na VM 1 execute o seguinte comando:
+'apt-get install nfs-server'
+
+No segundo e terceiro servidores ou VMs execute o comando para instalar somente as bibliotecas necessárias para a máquina cliente:
+'apt-get install nfs-common'
+
+Retornando ao servidor 1, na pasta /var/lib/docker/volumes/app/_data crie umarquivo conforme o comando abaixo:
+'nano /etc/exports'
+
+Abra o qruivo e configure-o da seguinte forma:
+
+![D1 09](https://github.com/user-attachments/assets/aa0ced44-5039-424f-a1a0-686168fcd6a1)
+
+Obs.: não é indicado usar o * pois ele irá liberar as permissões indicadas (leitura, escrita, sincronização e checar todas as subpastas) para qualquer um que tiver acesso à pasta.
+
+Volte para a pasta /var/lib/docker/volumes/app/_data e execute o comando abaixo para exportar a pasta:
+'exportfs -ar'
+
+Executando o comando **showmount -e** ele mostra as pastas da VM que estão sendo compartilhadas:
+
+![D1 10](https://github.com/user-attachments/assets/f83a39e1-770e-45cf-b6b7-0e4d37720ded)
+
+Na VM 2 e 3 execute o comando abaixo que vai criar a pasta /var/lib/docker/volumes/app/_data na mesma pasta /var/lib/docker/volumes/app/_data das VMs:
+
+![D1 11](https://github.com/user-attachments/assets/4f6e3adc-3499-4ae8-bda6-d29fe58fe876)
+
+Após isso ao executar o comando ls nas demais máquinas virtuais será possível verificar que os arquivos da VM 1 foram replicados para elas:
+
+![D1 12](https://github.com/user-attachments/assets/6abd788a-85d9-47bb-bdc5-f31432e562c6)
+
+
+### Criando um proxy utilizando NGINX
 
