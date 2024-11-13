@@ -163,3 +163,63 @@ Após isso ao executar o comando ls nas demais máquinas virtuais será possíve
 
 ### Criando um proxy utilizando NGINX
 
+Será criado um proxy para que quando uma requisição chegar em uma das máquinas ela seja replicada para todas as demais automaticamente. Dessa forma, quando a aplicação estiver recebendo muitos acessos, esses acessos serão espalhados para cada uma das máquinas.
+
+Será um proxy interno criado dentro de um container utilizando NGINX. O NGINX também faz o balanceamento de carga entre os servidores se tiver as configurações para isso.
+
+Digite o comando abaixo para criar uma pasta chamada proxy:
+![D1 13](https://github.com/user-attachments/assets/c3c5dc0d-413b-4db8-8ed0-44b74f731bd6)
+
+Crie um arquivo chamado nginx.conf conforme comando abaixo com o conteúdo conforme o arquivo https://github.com/Hisly-A/sakura-haruno/blob/main/nginx.conf:
+![D1 14](https://github.com/user-attachments/assets/51c9b13b-3278-4280-bbd4-2bfca6832b5d)
+
+Após deve ser criado um arquivo de configuração do container para especificar a imagem que será usada e o que será feito com a imagem, nesse caso será uma imagem do nginx e ela será enviada para o container, com o conteúdo do arquivo [dockerfile](https://github.com/Hisly-A/sakura-haruno/blob/main/dockerfile):
+![D1 15](https://github.com/user-attachments/assets/8989cadd-defb-46f1-8bcf-b3828668023c)
+
+Crie um containercom essa configuração que acabou de criar:
+![D1 16](https://github.com/user-attachments/assets/49268462-a057-4f05-a043-e2c320910d44)
+
+O ponto final no comando acima indica o arquivo dockerfile.
+
+Após executar o comando acima execute o comando docker image ls para verificar os arquivos criados no container:
+![D1 17](https://github.com/user-attachments/assets/2846b612-8166-4b1f-8937-9416e6cd417e)
+
+Utilize o comando docker container run para rodar o container com a imagem recém criada:
+![D1 18](https://github.com/user-attachments/assets/350bd146-4c21-4656-af41-fca38a438570)
+
+Verifique que o container proxy-app está em execução:
+![D1 19](https://github.com/user-attachments/assets/54c31851-e47d-4358-be72-e0db82926607)
+
+
+### Estressando o cluster
+
+Agora vamos estressar o proxy para verificar se ele realmente vai distribuir a carga entre os servidores do cluster.
+
+No site [loader](https://loader.io/) crie um novo target host com o IP do servidor principal utilizando a porta 4500:
+![D1 20](https://github.com/user-attachments/assets/1df90754-c152-498f-b0ec-2ccf43e5e65a)
+
+Com o novo host criado será necessário informar o novo arquivo de identificação no servidor:
+![D1 21](https://github.com/user-attachments/assets/0456259c-2a83-4536-89af-a9053cf40e5c)
+
+![D1 22](https://github.com/user-attachments/assets/1fb1ac68-cc5b-4a9a-8b97-0167661b3733)
+
+![D1 23](https://github.com/user-attachments/assets/002d9943-8714-48cf-ba95-3b6d9847d820)
+
+![D1 24](https://github.com/user-attachments/assets/51876cee-3052-43f0-a08a-e790dc8e8339)
+
+Na aba Tests crie um novo teste informando:
+- Nome
+- Quantidade de clientes: 300
+- Duração: 1 minuto
+- Método: GET
+- Protocolo: HTTP
+- Host: 34.201.104.100:4500
+- Path: index.php
+
+Execute o teste e verifique os resultados:
+![D1 25](https://github.com/user-attachments/assets/ae0e7418-6337-4bf1-947c-9e32e6748d58)
+
+Ao verificar a inclusão dos dados no banco será possível ver que os dados agora foram criados a partir de IPs diferentes, ou seja IPs das máquinas 2 e 3:
+![D1 26](https://github.com/user-attachments/assets/341c3979-5e8d-4ca8-943d-33a7b3f69097)
+
+
