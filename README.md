@@ -16,7 +16,21 @@ Crie no ambiente de nuvem escolhido 3 máquinas virtuais (podem ser máquinas b�
 
 Em uma das VMs crie um container do Docker com o microsserviço desejado, nesse caso um banco de dados.
 
-Acesse o site do Docker Hub https://hub.docker.com/ procure pela imagem do MySQL para conferir os comandos para criação do banco em contâiner Docker.
+Acesse o site do [Docker Hub](https://hub.docker.com/) procure pela imagem do MySQL para conferir os comandos para criação do banco em contâiner Docker.
+
+Execute o comando *docker pull mysql* para realizar o download da imagem na máquina desejada.
+
+Com o comando *docker images* é possível checar as imagens já baixadas.
+
+Para executar imagem utilize o comando *docker run mysql* (sendo mysql o nome da imagem).
+
+Para checar os containers em execução utilize *docker ps*. E com o comando *docker ps -a* é possível verificar os containers executados recentemente.
+
+Usando o comando *docker run mysql sleep 10* o container irá executar por 10 segundos e irá parar quando o tempo indicado acabar.
+
+Utilize o comando *docker stop* para parar um container em execução, para especificar o container que será parado basta informar o nome ou o ID do container após *stop*.
+
+Com o comando *docker run --help* é possível verificar as demais funcionalidades que podem ser usadas junto com o comando *docker run*. Por exemplo, *docker run -it ubuntu* sendo que o t aloca um pseudo terminal e o i para acionar o modo interativo no container, para poder acessar o bash e trabalhar com o sistema operacional dentro do container.
 
 Utilizando um aplicativo gerenciador de banco de dados (por exemplo Sequeler), adicione um novo banco de dados, neste caso será o MySQL criado anteriormente, informando o IP público, os dados de acesso, usuário, senha e a porta 3306.
 
@@ -44,7 +58,7 @@ Crie um container Docker para armazenar o arquivo index.php, com o servidor web 
 - /var/lib/docker/volumes/app/_data# docker run --name web-server -dt -p 80:80 -mount type=volume,src=app,dst=/app/ webdevops/php-apache:alpine-php7
 
 Após isso, execute o comando abaixo para verificar os containers rodando:
-'docker ps
+- docker ps
 
 
 ### Estressando o container
