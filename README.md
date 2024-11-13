@@ -34,17 +34,17 @@ Com o comando cd _data entre na pasta data onde será criado o microsserviço:
 ![D1 02](https://github.com/user-attachments/assets/d8d415ac-b8b7-4646-9736-f55244c1ccaa)
 
 Digite o comando abaixo para abrir o editor de código nano criando arquivo index.php:
-'nano index.php'
+'nano index.php
 
 Obs.: Neste código php foi utilizado o mysqli para realizar a conexão, o que não é aconselhável, mas foi usado apenas a título de demonstração para que seja rápido.
 
 Dê um Ctrl O para salvar e um Ctrl X para sair do editor de código.
 
 Crie um container Docker para armazenar o arquivo index.php, com o servidor web Apache e o PHP instalado:
-'/var/lib/docker/volumes/app/_data# docker run --name web-server -dt -p 80:80 -mount type=volume,src=app,dst=/app/ webdevops/php-apache:alpine-php7'
+'/var/lib/docker/volumes/app/_data# docker run --name web-server -dt -p 80:80 -mount type=volume,src=app,dst=/app/ webdevops/php-apache:alpine-php7
 
 Após isso, execute o comando abaixo para verificar os containers rodando:
-'docker ps'
+'docker ps
 
 
 ### Estressando o container
@@ -82,10 +82,10 @@ Após clique em *Run test* e analise as informações do teste:
 Em /var/lib/docker/volumes/app/_data xecute o comando docker ps para verificar os containers ativos.
 
 Execute o comando abaixo para excluir o container da aplicação web-server:
-'docker rm --force web-server'
+'docker rm --force web-server
 
 Execute o comando abaixo para iniciar um Docker Swarm:
-'docker swarm init'
+'docker swarm init
 
 Agora será necessário adicionar os demais servidores ou VMs ao Swarm, para isso acesse a VM desejada remotamente, entre como usuário root, e execute o comando abaixo:
 
@@ -134,10 +134,10 @@ Na VM 1 execute o seguinte comando:
 'apt-get install nfs-server'
 
 No segundo e terceiro servidores ou VMs execute o comando para instalar somente as bibliotecas necessárias para a máquina cliente:
-'apt-get install nfs-common'
+'apt-get install nfs-common
 
 Retornando ao servidor 1, na pasta /var/lib/docker/volumes/app/_data crie umarquivo conforme o comando abaixo:
-'nano /etc/exports'
+'nano /etc/exports
 
 Abra o qruivo e configure-o da seguinte forma:
 
@@ -146,7 +146,7 @@ Abra o qruivo e configure-o da seguinte forma:
 Obs.: não é indicado usar o * pois ele irá liberar as permissões indicadas (leitura, escrita, sincronização e checar todas as subpastas) para qualquer um que tiver acesso à pasta.
 
 Volte para a pasta /var/lib/docker/volumes/app/_data e execute o comando abaixo para exportar a pasta:
-'exportfs -ar'
+exportfs -ar
 
 Executando o comando **showmount -e** ele mostra as pastas da VM que estão sendo compartilhadas:
 
@@ -196,9 +196,11 @@ Verifique que o container proxy-app está em execução:
 Agora vamos estressar o proxy para verificar se ele realmente vai distribuir a carga entre os servidores do cluster.
 
 No site [loader](https://loader.io/) crie um novo target host com o IP do servidor principal utilizando a porta 4500:
+
 ![D1 20](https://github.com/user-attachments/assets/1df90754-c152-498f-b0ec-2ccf43e5e65a)
 
 Com o novo host criado será necessário informar o novo arquivo de identificação no servidor:
+
 ![D1 21](https://github.com/user-attachments/assets/0456259c-2a83-4536-89af-a9053cf40e5c)
 
 ![D1 22](https://github.com/user-attachments/assets/1fb1ac68-cc5b-4a9a-8b97-0167661b3733)
@@ -217,9 +219,11 @@ Na aba Tests crie um novo teste informando:
 - Path: index.php
 
 Execute o teste e verifique os resultados:
+
 ![D1 25](https://github.com/user-attachments/assets/ae0e7418-6337-4bf1-947c-9e32e6748d58)
 
 Ao verificar a inclusão dos dados no banco será possível ver que os dados agora foram criados a partir de IPs diferentes, ou seja IPs das máquinas 2 e 3:
+
 ![D1 26](https://github.com/user-attachments/assets/341c3979-5e8d-4ca8-943d-33a7b3f69097)
 
 
