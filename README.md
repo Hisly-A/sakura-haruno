@@ -25,7 +25,7 @@ Utilizando um aplicativo gerenciador de banco de dados (por exemplo Sequeler), a
 Crie uma tabela no banco de dados, como a tabela do arquivo banco.sql.
 
 Crie um microsserviço dentro do APP, se estiver uitlizando Linux siga o caminho abaixo:
-'cd /var/lib/docker/volumes'
+'''cd /var/lib/docker/volumes'''
 
 De um comando ls para listar o conteúdo, com o comando cd app entre na pasta app e dê o comando ls para listar.
 
