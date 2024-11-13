@@ -1,5 +1,5 @@
 # Docker: Utilização prática no cenário de Microsserviços
-### Denilson Bonatti, Instrutor - Digital Innovation One
+##### Denilson Bonatti, Instrutor - Digital Innovation One
 
 
 Muito se tem falado de containers e consequentemente do Docker no ambiente de desenvolvimento. Mas qual a real função de um container no cenários de microsserviços? Qual a real função e quais exemplos práticos podem ser aplicados no dia a dia?
@@ -61,7 +61,7 @@ Após isso, execute o comando abaixo para verificar os containers rodando:
 - docker ps
 
 
-### Estressando o container
+## Estressando o container
 
 Acesse o site [loader](https://loader.io/), crie uma conta, crie um Target Host informando o domínio IP, por exemplo http//:34.201.104.100
 
@@ -91,7 +91,7 @@ Após clique em *Run test* e analise as informações do teste:
 ![D1 05](https://github.com/user-attachments/assets/02139851-806d-4331-a4f7-0547d8a6dda0)
 
 
-### Iniciando um Cluster Swarm
+## Iniciando um Cluster Swarm
 
 Em /var/lib/docker/volumes/app/_data xecute o comando docker ps para verificar os containers ativos.
 
@@ -117,7 +117,7 @@ Deverá retornar a seguinte tela:
 ![D1 07](https://github.com/user-attachments/assets/0efa3cfd-603f-435c-a373-9fcbfeb5c65c)
 
 
-### Criando um serviço no Cluster Swarm
+## Criando um serviço no Cluster Swarm
 
 Execute o comando abaixo na VM ou servidor principal:
 
@@ -138,7 +138,7 @@ Execute o comando abaixo para saber onde foram replicados os containers:
 - docker service ps web-server
 
 
-### Replicando um volume dentro do Cluster
+## Replicando um volume dentro do Cluster
 
 Da forma como o cluster foi configurado ele ainda não está replicando os volumes para as demais VMs.
 
@@ -175,7 +175,7 @@ Após isso ao executar o comando ls nas demais máquinas virtuais será possíve
 ![D1 12](https://github.com/user-attachments/assets/6abd788a-85d9-47bb-bdc5-f31432e562c6)
 
 
-### Criando um proxy utilizando NGINX
+## Criando um proxy utilizando NGINX
 
 Será criado um proxy para que quando uma requisição chegar em uma das máquinas ela seja replicada para todas as demais automaticamente. Dessa forma, quando a aplicação estiver recebendo muitos acessos, esses acessos serão espalhados para cada uma das máquinas.
 
@@ -205,7 +205,7 @@ Verifique que o container proxy-app está em execução:
 ![D1 19](https://github.com/user-attachments/assets/54c31851-e47d-4358-be72-e0db82926607)
 
 
-### Estressando o cluster
+## Estressando o cluster
 
 Agora vamos estressar o proxy para verificar se ele realmente vai distribuir a carga entre os servidores do cluster.
 
