@@ -25,7 +25,7 @@ Utilizando um aplicativo gerenciador de banco de dados (por exemplo Sequeler), a
 Crie uma tabela no banco de dados, como a tabela do arquivo banco.sql.
 
 Crie um microsserviço dentro do APP, se estiver uitlizando Linux siga o caminho abaixo:
-'''cd /var/lib/docker/volumes'''
+- cd /var/lib/docker/volumes
 
 De um comando ls para listar o conteúdo, com o comando cd app entre na pasta app e dê o comando ls para listar.
 
@@ -34,14 +34,14 @@ Com o comando cd _data entre na pasta data onde será criado o microsserviço:
 ![D1 02](https://github.com/user-attachments/assets/d8d415ac-b8b7-4646-9736-f55244c1ccaa)
 
 Digite o comando abaixo para abrir o editor de código nano criando arquivo index.php:
-'nano index.php
+- nano index.php
 
 Obs.: Neste código php foi utilizado o mysqli para realizar a conexão, o que não é aconselhável, mas foi usado apenas a título de demonstração para que seja rápido.
 
 Dê um Ctrl O para salvar e um Ctrl X para sair do editor de código.
 
 Crie um container Docker para armazenar o arquivo index.php, com o servidor web Apache e o PHP instalado:
-'/var/lib/docker/volumes/app/_data# docker run --name web-server -dt -p 80:80 -mount type=volume,src=app,dst=/app/ webdevops/php-apache:alpine-php7
+- /var/lib/docker/volumes/app/_data# docker run --name web-server -dt -p 80:80 -mount type=volume,src=app,dst=/app/ webdevops/php-apache:alpine-php7
 
 Após isso, execute o comando abaixo para verificar os containers rodando:
 'docker ps
@@ -49,7 +49,7 @@ Após isso, execute o comando abaixo para verificar os containers rodando:
 
 ### Estressando o container
 
-Acesse o site https://loader.io/, crie uma conta, crie um Target Host informando o domínio IP, por exemplo http//:34.201.104.100
+Acesse o site [loader](https://loader.io/), crie uma conta, crie um Target Host informando o domínio IP, por exemplo http//:34.201.104.100
 
 No container crie um arquivo com o nome gerado:
 
@@ -61,7 +61,7 @@ E no conteúdo do arquivo informe o mesmo nome.
 
 Lembre-se de criar o arquivo no diretório /var/lib/docker/volumes/app/_data.
 
-Retornando ao site https://loader.io/ clique em Verify e deverá aparecer uma mensagem informando que a verificação passou.
+Retornando ao site [loader](https://loader.io/) clique em Verify e deverá aparecer uma mensagem informando que a verificação passou.
 
 Na aba Tests crie um novo teste informando:
 - Nome
@@ -82,10 +82,10 @@ Após clique em *Run test* e analise as informações do teste:
 Em /var/lib/docker/volumes/app/_data xecute o comando docker ps para verificar os containers ativos.
 
 Execute o comando abaixo para excluir o container da aplicação web-server:
-'docker rm --force web-server
+- docker rm --force web-server
 
 Execute o comando abaixo para iniciar um Docker Swarm:
-'docker swarm init
+- docker swarm init
 
 Agora será necessário adicionar os demais servidores ou VMs ao Swarm, para isso acesse a VM desejada remotamente, entre como usuário root, e execute o comando abaixo:
 
@@ -96,7 +96,7 @@ Nesse caso o IP 172.31.0 127 é o IP de acesso local entre as máquinas virtuais
 Execute o mesmo comando acima na terceira máquina virtual.
 
 Após execute o comando abaixo para verificar os nós pertencentes ao cluster:
-'docker node ls'
+- docker node ls
 
 Deverá retornar a seguinte tela:
 
@@ -121,7 +121,7 @@ Onde:
 - webdevops/php-apache:alpine-php7: é a imagem
 
 Execute o comando abaixo para saber onde foram replicados os containers:
-'docker service ps web-server'
+- docker service ps web-server
 
 
 ### Replicando um volume dentro do Cluster
@@ -131,13 +131,13 @@ Da forma como o cluster foi configurado ele ainda não está replicando os volum
 Para isso será necessário replicar a pasta /var/lib/docker/volumes/app/_data para as VMs 2 e 3.
 
 Na VM 1 execute o seguinte comando:
-'apt-get install nfs-server'
+- apt-get install nfs-server
 
 No segundo e terceiro servidores ou VMs execute o comando para instalar somente as bibliotecas necessárias para a máquina cliente:
-'apt-get install nfs-common
+- apt-get install nfs-common
 
 Retornando ao servidor 1, na pasta /var/lib/docker/volumes/app/_data crie umarquivo conforme o comando abaixo:
-'nano /etc/exports
+- nano /etc/exports
 
 Abra o qruivo e configure-o da seguinte forma:
 
@@ -146,7 +146,7 @@ Abra o qruivo e configure-o da seguinte forma:
 Obs.: não é indicado usar o * pois ele irá liberar as permissões indicadas (leitura, escrita, sincronização e checar todas as subpastas) para qualquer um que tiver acesso à pasta.
 
 Volte para a pasta /var/lib/docker/volumes/app/_data e execute o comando abaixo para exportar a pasta:
-exportfs -ar
+- exportfs -ar
 
 Executando o comando **showmount -e** ele mostra as pastas da VM que estão sendo compartilhadas:
 
@@ -170,7 +170,7 @@ Será um proxy interno criado dentro de um container utilizando NGINX. O NGINX t
 Digite o comando abaixo para criar uma pasta chamada proxy:
 ![D1 13](https://github.com/user-attachments/assets/c3c5dc0d-413b-4db8-8ed0-44b74f731bd6)
 
-Crie um arquivo chamado nginx.conf conforme comando abaixo com o conteúdo conforme o arquivo https://github.com/Hisly-A/sakura-haruno/blob/main/nginx.conf:
+Crie um arquivo chamado nginx.conf conforme comando abaixo com o conteúdo conforme o arquivo [nginx.conf](https://github.com/Hisly-A/sakura-haruno/blob/main/nginx.conf):
 ![D1 14](https://github.com/user-attachments/assets/51c9b13b-3278-4280-bbd4-2bfca6832b5d)
 
 Após deve ser criado um arquivo de configuração do container para especificar a imagem que será usada e o que será feito com a imagem, nesse caso será uma imagem do nginx e ela será enviada para o container, com o conteúdo do arquivo [dockerfile](https://github.com/Hisly-A/sakura-haruno/blob/main/dockerfile):
